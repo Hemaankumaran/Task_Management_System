@@ -1,5 +1,6 @@
 package com.springboot.taskmgmtsystem.service;
 
+import com.springboot.taskmgmtsystem.dto.TaskPageResDto;
 import com.springboot.taskmgmtsystem.dto.TaskReqDto;
 import com.springboot.taskmgmtsystem.dto.TaskResDto;
 import com.springboot.taskmgmtsystem.enums.Role;
@@ -12,6 +13,8 @@ import com.springboot.taskmgmtsystem.model.Task;
 import com.springboot.taskmgmtsystem.model.User;
 import com.springboot.taskmgmtsystem.repository.TaskRepo;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.event.Level;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class TaskService {
@@ -26,12 +30,16 @@ public class TaskService {
     private TaskRepo taskRepo;
     private CustomerService customerService;
 
-    public List<TaskResDto> getAllTasks(int page, int size) {
+    public TaskPageResDto getAllTasks(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Task> taskPage = taskRepo.findAll(pageable);
-        return taskPage.stream()
-                .map(TaskMapper :: toDto)
-                .toList();
+        List<TaskResDto> taskList = taskPage.stream()
+                                            .map(TaskMapper :: toDto).toList();
+        return new TaskPageResDto(
+                taskList,
+                taskPage.getTotalElements(),
+                taskPage.getTotalPages()
+        );
     }
 
     public TaskResDto getTaskById(Long taskId) {
@@ -72,6 +80,8 @@ public class TaskService {
     }
 
     public void deleteTaskById(Long taskId, String username) {
+        log.atLevel(Level.WARN).log("Entering to delete a task..");
+
         // validate
         Task task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid task id.."));

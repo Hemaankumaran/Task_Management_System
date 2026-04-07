@@ -1,5 +1,6 @@
 package com.springboot.taskmgmtsystem.controller;
 
+import com.springboot.taskmgmtsystem.dto.TaskPageResDto;
 import com.springboot.taskmgmtsystem.dto.TaskReqDto;
 import com.springboot.taskmgmtsystem.dto.TaskResDto;
 import com.springboot.taskmgmtsystem.enums.TaskStatus;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,8 +21,8 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping("/getall") // ADMIN
-    public List<TaskResDto> getAllTasks(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-                                        @RequestParam(value = "size", required = false, defaultValue = "5") int size){
+    public TaskPageResDto getAllTasks(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                      @RequestParam(value = "size", required = false, defaultValue = "5") int size){
         return taskService.getAllTasks(page, size);
     }
 
