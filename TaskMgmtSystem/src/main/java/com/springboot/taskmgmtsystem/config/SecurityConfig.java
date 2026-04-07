@@ -18,8 +18,8 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Bean
-    // ADMIN -> admin - admin, administrator - administrator
-    // CUSTOMER -> harry - potter, ron - ron
+    // ADMIN -> admin - admin
+    // CUSTOMER -> ron - ron, dhoni - dhoni
     public SecurityFilterChain bankingSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -30,6 +30,12 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/auth/login")
                                 .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/api/admin/add")
+                                .permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/customer/signup")
+                                .permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/task/getall")
                                 .hasAuthority("ADMIN")
@@ -49,8 +55,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }

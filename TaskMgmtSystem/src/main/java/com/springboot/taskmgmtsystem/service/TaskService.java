@@ -2,11 +2,14 @@ package com.springboot.taskmgmtsystem.service;
 
 import com.springboot.taskmgmtsystem.dto.TaskReqDto;
 import com.springboot.taskmgmtsystem.dto.TaskResDto;
+import com.springboot.taskmgmtsystem.enums.Role;
 import com.springboot.taskmgmtsystem.enums.TaskStatus;
+import com.springboot.taskmgmtsystem.exceptions.PermissionException;
 import com.springboot.taskmgmtsystem.exceptions.ResourceNotFoundException;
 import com.springboot.taskmgmtsystem.mapper.TaskMapper;
 import com.springboot.taskmgmtsystem.model.Customer;
 import com.springboot.taskmgmtsystem.model.Task;
+import com.springboot.taskmgmtsystem.model.User;
 import com.springboot.taskmgmtsystem.repository.TaskRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class TaskService {
+    private final UserService userService;
     private TaskRepo taskRepo;
     private CustomerService customerService;
 
@@ -51,23 +55,33 @@ public class TaskService {
         taskRepo.save(task);
     }
 
-    public void updateTaskStatus(TaskStatus taskStatus, Long taskId, String name) {
+    public void updateTaskStatus(TaskStatus taskStatus, Long taskId, String username) {
         Task task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid task id.."));
+        User user = (User) userService.loadUserByUsername(username);
 
         // check permission
+        if(user.getRole().equals(Role.CUSTOMER)){
+            if(task.getCustomer().getUser().getId() != user.getId())
+                throw new PermissionException("You cannot update other customer's tasks..");
+        }
 
         task.setTaskStatus(taskStatus);
 
         taskRepo.save(task);
     }
 
-    public void deleteTaskById(Long taskId, String name) {
+    public void deleteTaskById(Long taskId, String username) {
         // validate
         Task task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid task id.."));
+        User user = (User) userService.loadUserByUsername(username);
 
         //check permission
+        if(user.getRole().equals(Role.CUSTOMER)){
+            if(task.getCustomer().getUser().getId() != user.getId())
+                throw new PermissionException("You cannot delete other customer's tasks..");
+        }
 
         // hard delete
         taskRepo.deleteById(taskId);

@@ -1,0 +1,20 @@
+package com.springboot.taskmgmtsystem.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record CustomerSignUpDto(
+        @NotNull
+        @NotBlank
+        String customer_name,
+        @NotNull
+        @NotBlank
+        String contact,
+        @NotNull
+        @NotBlank
+        String username,
+        @NotNull
+        @NotBlank
+        String password
+) {
+}

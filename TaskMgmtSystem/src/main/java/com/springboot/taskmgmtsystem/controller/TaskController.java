@@ -42,7 +42,7 @@ public class TaskController {
     }
 
     @PutMapping("/update/{taskId}") // authenticated
-    public ResponseEntity<Map<String, Object>> updateTaskStatus(@RequestParam(value = "taskStatus", required = true) TaskStatus taskStatus,
+    public ResponseEntity<Map<String, Object>> updateTaskStatus(@RequestParam(value = "taskStatus") TaskStatus taskStatus,
                                                                 @PathVariable Long taskId,
                                                                 Principal principal){
         taskService.updateTaskStatus(taskStatus, taskId, principal.getName());

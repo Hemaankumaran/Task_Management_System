@@ -1,5 +1,6 @@
 package com.springboot.taskmgmtsystem.service;
 
+import com.springboot.taskmgmtsystem.model.User;
 import com.springboot.taskmgmtsystem.repository.UserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,5 +16,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo.loadUserByUsername(username);
+    }
+
+    public User addUser(User user) {
+        return userRepo.save(user);
     }
 }
