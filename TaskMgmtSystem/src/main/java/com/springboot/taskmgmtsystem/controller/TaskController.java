@@ -20,7 +20,7 @@ import java.util.Map;
 public class TaskController {
     private TaskService taskService;
 
-    @GetMapping("/getall") // authenticated
+    @GetMapping("/getall") // ADMIN
     public List<TaskResDto> getAllTasks(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
                                         @RequestParam(value = "size", required = false, defaultValue = "5") int size){
         return taskService.getAllTasks(page, size);
@@ -31,7 +31,7 @@ public class TaskController {
         return taskService.getTaskById(taskId);
     }
 
-    @PostMapping("/add/{customerId}") // permitAll
+    @PostMapping("/add/{customerId}") // authenticated
     public ResponseEntity<Map<String, Object>> addTask(@RequestBody TaskReqDto taskReqDto,
                                                        @PathVariable Long customerId){
         taskService.addTask(taskReqDto, customerId);
@@ -52,8 +52,9 @@ public class TaskController {
                 .status(HttpStatus.ACCEPTED).body(map);
     }
 
-    @DeleteMapping("/delete/{taskId}")
-    public ResponseEntity<Map<String, Object>> deleteTaskById(@PathVariable Long taskId, Principal principal){
+    @DeleteMapping("/delete/{taskId}") // authenticated
+    public ResponseEntity<Map<String, Object>> deleteTaskById(@PathVariable Long taskId,
+                                                              Principal principal){
         taskService.deleteTaskById(taskId, principal.getName());
         Map<String, Object> map = new HashMap<>();
         map.put("message", "Task deleted successfully..!");

@@ -63,11 +63,13 @@ public class TaskService {
     }
 
     public void deleteTaskById(Long taskId, String name) {
+        // validate
         Task task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid task id.."));
 
         //check permission
 
+        // hard delete
         taskRepo.deleteById(taskId);
     }
 }

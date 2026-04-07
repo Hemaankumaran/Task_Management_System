@@ -28,4 +28,7 @@ public class Customer {
     private String contact;
     @Email
     private String email;
+
+    @OneToOne
+    private User user;
 }
